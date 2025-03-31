@@ -1,0 +1,4 @@
+bottle
+kubernetes
+pyyaml
+# Using minimal dependencies for Kubernetes client
