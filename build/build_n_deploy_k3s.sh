@@ -63,7 +63,7 @@ sudo k3s ctr images import minimal-python-app_latest.tar || log_error "Failed to
 
 # Apply the Kubernetes manifest
 log_info "Deploying to k3s cluster"
-kubectl apply -f kubernetes/deployment.yaml || log_error "Failed to apply Kubernetes manifest"
+kubectl apply -f kubernetes/ || log_error "Failed to apply Kubernetes manifest"
 
 # Verify deployment status
 log_info "Waiting for deployment to be ready..."
@@ -80,6 +80,7 @@ kubectl get pods -l app=minimal-python-app
 # If we reach here, everything was successful
 log_info "Deployment completed successfully!"
 log_info "Use the following commands with the correct KUBECONFIG:"
+KUBERNETES_NODE_IP=$(kubectl get nodes -o jsonpath='{range .items[*]}{.status.addresses[?(@.type=="InternalIP")].address}{"\n"}{end}')
+SERVICE_NODE_PORT=$(yq '.spec.ports[] | select(.nodePort != null) | .nodePort' kubernetes/deployment.yaml)
 echo -e "${YELLOW}export KUBECONFIG=~/.kube/k3s_config${NC}"
-echo -e "${YELLOW}kubectl port-forward svc/minimal-python-app 8080:80${NC}"
-echo -e "${YELLOW}# Then access http://localhost:8080 in your browser${NC}"
+echo -e "${YELLOW}# Then access http://${KUBERNETES_NODE_IP}:${SERVICE_NODE_PORT} in your browser${NC}"

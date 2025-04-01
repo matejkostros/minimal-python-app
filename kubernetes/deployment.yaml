@@ -14,9 +14,9 @@ spec:
       labels:
         app: minimal-python-app
     spec:
+      serviceAccountName: minimal-python-app-sa
       containers:
       - name: minimal-python-app
-        # Use the correct image name that exists in your system
         image: docker.io/library/minimal-python-app:latest
         imagePullPolicy: IfNotPresent
         ports:
@@ -42,7 +42,7 @@ spec:
             memory: "128Mi"
           requests:
             cpu: "100m"
-            memory: "64Mi"
+            memory: "16Mi"
         livenessProbe:
           httpGet:
             path: /healthz
@@ -82,3 +82,20 @@ spec:
   selector:
     app: minimal-python-app
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minimal-python-app-nodeport
+  labels:
+    app: minimal-python-app
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30080
+    protocol: TCP
+    name: http
+  selector:
+    app: minimal-python-app
+  type: NodePort
