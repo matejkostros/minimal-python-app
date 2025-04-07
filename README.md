@@ -35,7 +35,17 @@ kubernetes-python-app/
 ## Building the Container
 
 ```bash
-docker build -t minimal-k8s-python .
+# Bump the patch version automatically (e.g., 1.0.0 to 1.0.1)
+./build_n_deploy_k3s.sh --version bump
+
+# Set a specific version
+./build_n_deploy_k3s.sh --version 1.2.3
+
+# Short form
+./build_n_deploy_k3s.sh -v bump
+
+# Use current version (no change)
+./build_n_deploy_k3s.sh
 ```
 
 ## Running Locally
@@ -50,6 +60,7 @@ Then visit `http://localhost:8080` in your browser.
 
 ```bash
 # Update the image name in kubernetes/deployment.yaml first
+# Used outside of local k3s
 kubectl apply -f kubernetes/deployment.yaml
 ```
 
